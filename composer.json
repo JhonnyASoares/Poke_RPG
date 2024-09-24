@@ -1,0 +1,18 @@
+{
+    "description": "Projeto RPG Pokemon Site",
+    "authors": [
+        {
+            "name": "Jhonny A. Soares",
+            "email": "jhonny.mg35@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Core\\": "core/",
+            "Sts\\": "app/Sts/"
+        }
+    },
+    "require": {
+    }
+}
