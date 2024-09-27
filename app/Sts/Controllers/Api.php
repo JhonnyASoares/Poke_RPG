@@ -15,11 +15,15 @@ class Api
      */
     public function index(): void
     {
+        //print_r('<pre>');
         $teste = new \Sts\Models\ApiToDb();
         //$teste->saveTypeInDb();
         //$teste->saveDamageClassDb();
-        $teste->saveMovesDb();
-        print_r('<pre>');
+        //$teste->saveMovesDb();
+        //$teste->saveNaturesDb();
+        //$teste->saveAbilitysDb();
+        //$teste->savePokemonsDb();
+
 
         //$loadView = new \Core\ConfigView("sts/Views/Api", $this->data);
         //$loadView->loadView();
