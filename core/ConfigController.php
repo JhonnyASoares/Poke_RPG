@@ -10,16 +10,19 @@ namespace Core;
  */
 class ConfigController extends Config
 {
-    /** @var [string] $url Recebe a URL do .htaccess*/
-    private $url;
-    /** @var [array] $urlArray Recebe a URL convertida para array*/
-    private $urlArray; //array
-    /** @var [string] $urlController Recebe a URL final pra pagina que deve ser carregada*/
-    private $urlController;
-    /** @var [string] $urlSlugController Recebe a URL com apenas as primeiras letras de cada palavra em maiusculo*/
-    private $urlSlugController;
-    /** @var [array] $format Recebe caracteres especiais e por quais caracteres eles devem ser substituidos*/
-    private $format; //array
+    /** @var string $url Recebe a URL do .htaccess */
+    private string $url;
+    /** @var array $urlArray Recebe a URL convertida para array */
+    private array $urlArray;
+    /** @var string $urlController Recebe da URL o nome da controller */
+    private string $urlController;
+    /** @var string $urlParamentro Recebe da URL o parâmetro */
+    /*private string $urlParameter;*/
+    private string $urlSlugController;
+    /** @var array $format Recebe o array de caracteres especiais que devem ser substituido */
+    private array $format;
+    /** @var string $classe Recebe a classe */
+    private string $classLoad;
 
     /**
      * Recebe a URL do .htaccess
@@ -39,10 +42,10 @@ class ConfigController extends Config
             if (isset($this->urlArray[0])) {
                 $this->urlController = $this->slugController($this->urlArray[0]);
             } else {
-                $this->urlController = CONTROLLER;
+                $this->urlController = $this->slugController(CONTROLLER);
             }
         } else {
-            $this->urlController = CONTROLLER;
+            $this->urlController = $this->slugController(CONTROLLER);
         }
     }
 
@@ -86,7 +89,6 @@ class ConfigController extends Config
         return $this->urlSlugController;
     }
 
-
     /**
      * Carregar as Controllers.
      * Instanciar as classes da Controller e carregar o método index.
@@ -95,16 +97,28 @@ class ConfigController extends Config
      */
     public function loadPage(): void
     {
-        //$urlCtl = $this->urlController;
-        //if (strpos($urlCtl, "controller") !== false or strpos($urlCtl, "Controller") !== false) {
-        //    str_replace("controller", "Controller", $urlCtl);
-        //    $classLoad = "\\Sts\\Controllers\\" . $urlCtl;
-        //} else {
-        //    $classLoad = "\\Sts\\Controllers\\" . $urlCtl . "Controller";
-        //}
+        $this->classLoad = "\\Sts\\Controllers\\" . $this->urlController;
+        if (class_exists($this->classLoad)) {
+            $this->loadClass();
+        } else {
+            $this->urlController = $this->slugController('Error');
+            $this->loadPage();
+        }
+    }
 
-        $classLoad = "\\Sts\\Controllers\\" . $this->urlController;
-        $classPage = new $classLoad();
-        $classPage->index();
+    /**  
+     * Verificar se o método existe, existindo o método carrega a página;
+     * Não existindo o método, para o carregamento e apresenta mensagem de erro.
+     * 
+     * @return void
+     */
+    private function loadClass(): void
+    {
+        $classPage = new $this->classLoad();
+        if (method_exists($classPage, "index")) {
+            $classPage->index();
+        } else {
+            die("Erro: Por favor tente novamente. Caso o problema persista, entre em contato o administrador " . EMAILADM);
+        }
     }
 }

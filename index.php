@@ -1,5 +1,7 @@
 <?php
 
+session_start(); // Iniciar a sessão
+ob_start(); // Buffer de saida
 
 //Constante que define que o usuario esta acessando paginas internas atraves da pagina "index.php".
 define('P0K3M4RP5G', true);

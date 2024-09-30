@@ -4,8 +4,8 @@ namespace Sts\Models\Helper;
 
 // Redirecionar ou para o processamento quando o usuário não acessa o arquivo index.php
 if (!defined('P0K3M4RP5G')) {
-    header("Location: /");
-    die("Erro: Página não encontrada!");
+    header("Location: /home");
+    die("Erro: Pagina nao encontrada!");
 }
 
 use PDO;

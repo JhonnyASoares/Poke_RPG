@@ -1,0 +1,28 @@
+body {
+    background-image: url("/app/Sts/Assets/Images/Backgrounds/day_background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 900px;
+}
+
+.container {
+    background-color: aquamarine;
+    height: 206px;
+    min-width: 568px;
+    margin: 100px auto 0;
+    display: flex;
+    justify-content: center;
+}
+
+.main {
+    max-width: 496px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.main form{
+    display: flex;
+    flex-direction: column;
+}

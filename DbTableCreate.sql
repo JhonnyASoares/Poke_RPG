@@ -101,3 +101,20 @@ CREATE TABLE pokemons_gifs (
     modified datetime DEFAULT NULL,
     FOREIGN KEY (pokemon_id) REFERENCES pokemons (id)
 );
+
+CREATE TABLE pokemons_species (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pokemon_id INT NOT NULL,
+    is_baby BOOLEAN NOT NULL,
+    is_legendary BOOLEAN NOT NULL,
+    is_mythical BOOLEAN NOT NULL,
+
+    base_happiness INT NOT NULL,
+    capture_rate INT NOT NULL,
+    gender_rate INT NOT NULL,   
+    hatch_counter INT NOT NULL,
+
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (pokemon_id) REFERENCES pokemons (id)
+);

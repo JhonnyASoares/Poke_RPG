@@ -16,6 +16,8 @@ abstract class Config
     protected function config(): void
     {
         define('URL', 'http://pokemon.test/');
+        define('URLCSS', 'http://pokemon.test/app/Sts/Assets/Css/');
+        define('URLJS', 'http://pokemon.test/app/Sts/Assets/Js/');
 
         define('CONTROLLER', 'Home');
 
@@ -26,7 +28,7 @@ abstract class Config
         define('USER', 'root');
         define('PASS', '');
         define('DBNAME', 'pokemon_rpg');
-        //define('PORT', );
+        define('PORT', 3306);
 
         define('EMAILADM', 'jhonny.mg35@gmail.com');
     }

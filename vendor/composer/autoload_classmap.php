@@ -7,4 +7,16 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'Core\\Config' => $baseDir . '/core/Config.php',
+    'Core\\ConfigController' => $baseDir . '/core/ConfigController.php',
+    'Core\\ConfigView' => $baseDir . '/core/ConfigView.php',
+    'Sts\\Controllers\\Api' => $baseDir . '/app/Sts/Controllers/Api.php',
+    'Sts\\Controllers\\Home' => $baseDir . '/app/Sts/Controllers/Home.php',
+    'Sts\\Controllers\\Login' => $baseDir . '/app/Sts/Controllers/Login.php',
+    'Sts\\Controllers\\Pokedex' => $baseDir . '/app/Sts/Controllers/Pokedex.php',
+    'Sts\\Models\\ApiToDb' => $baseDir . '/app/Sts/Models/ApiToDb.php',
+    'Sts\\Models\\GetApi' => $baseDir . '/app/Sts/Models/GetApi.php',
+    'Sts\\Models\\Helper\\StsConn' => $baseDir . '/app/Sts/Models/Helper/StsConn.php',
+    'Sts\\Models\\Helper\\StsCreate' => $baseDir . '/app/Sts/Models/Helper/StsCreate.php',
+    'Sts\\Models\\Helper\\StsRead' => $baseDir . '/app/Sts/Models/Helper/StsRead.php',
 );

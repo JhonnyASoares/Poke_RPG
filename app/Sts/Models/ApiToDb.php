@@ -155,7 +155,7 @@ class ApiToDb
     }
     /**
      * Funcao responsavel por salvar os dados na tabela 'pokemons' e chamar outras funções para
-     * salvar outros dados referentes aos pokemons em outra tabela para otimizar o codigo
+     * salvar outros dados referentes aos pokemons em outra tabela
      *
      * @return void
      */
@@ -206,6 +206,46 @@ class ApiToDb
             if (!empty($iMResult->sprites->other->showdown->back_default)) {
                 // Salvando os gifs dos pokemons em outra tabela 
                 $this->pokemonGifs($iMResult);
+            }
+        }
+    }
+    /**
+     * Funcao responsavel por salvar outros dados referentes aos pokemons na tabela 'pokemons_species'
+     *
+     * @return void
+     */
+    public function savePokemonsSpeciesDb(): void
+    {
+        //Classe \GetApi recebe o link da API, aplica o cURL e atribui os dados com json_decode aplicado ao objeto $this->result 
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=2000');
+        $filterResults = $testarApi->result->results;
+        foreach ($filterResults as $values) {
+            $interPkm = new \Sts\Models\GetApi($values->url);
+            $iMResult = $interPkm->result;
+
+            //Buscando o id do pokemon no banco de dados
+            $pkmName = $iMResult->varieties[0]->pokemon->name;
+            $getPkmData = new \Sts\Models\Helper\StsRead;
+            $getPkmData->exeRead('pokemons', "WHERE `name`='$pkmName'");
+            $pkmData = $getPkmData->getResult();
+
+            //Atribuindo ao $this->data os dados que serão salvos do banco de dados
+            $this->data['pokemon_id'] = $pkmData[0]['id'];
+            $this->data['is_baby'] = (int) $iMResult->is_baby;
+            $this->data['is_legendary'] = (int) $iMResult->is_legendary;
+            $this->data['is_mythical'] = (int) $iMResult->is_mythical;
+            $this->data['base_happiness'] = $iMResult->base_happiness;
+            $this->data['capture_rate'] = $iMResult->capture_rate;
+            $this->data['gender_rate'] = $iMResult->gender_rate;
+            $this->data['hatch_counter'] = $iMResult->hatch_counter;
+
+            //Salvando os dados do banco de dados
+            try {
+                $registerPkmSpecies = new \Sts\Models\Helper\StsCreate;
+                $registerPkmSpecies->exeCreate('pokemons_species', $this->data);
+            } catch (Exception $err) {
+                echo "ERRO AO REGISTRAR O POKEMON " .  $err;
+                die;
             }
         }
     }
