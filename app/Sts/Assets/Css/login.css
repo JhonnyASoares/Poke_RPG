@@ -1,28 +1,139 @@
 body {
-    background-image: url("/app/Sts/Assets/Images/Backgrounds/day_background.jpg");
+    background-image: url("/app/Sts/Assets/Images/Backgrounds/day_background_c.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    min-height: 900px;
+    min-height: 40.25rem;
+}
+
+nav {
+    text-align: center;
+    height: 4rem;
+}
+.logo {
+    height: 4rem;
+}
+
+.logo a img {
+    height: 100%;
+}
+
+.logo a img:hover {
+    box-shadow: 0 0 0.5rem rgb(255, 255, 255);
 }
 
 .container {
-    background-color: aquamarine;
-    height: 206px;
-    min-width: 568px;
-    margin: 100px auto 0;
+
+    min-height: 12.875rem;
+    min-width: 35.5rem;
+    padding-block: 8rem 3.75rem;
     display: flex;
     justify-content: center;
+
 }
 
 .main {
-    max-width: 496px;
+    background-position: center;
+    max-width: 31rem;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.main form{
+
+h2 {
+    font-family: cursive;
+    font-size: 2rem;
+    line-height: 2rem;
+    letter-spacing: 0.25rem;
+    text-shadow: 0 0 0.1rem rgb(255, 255, 255);
+}
+
+
+form {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 3rem;
+}
+
+.form-imgs {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+}
+
+.form-imgs img {
+    position: absolute;
+    width: 12.5rem;
+    height: 12.5rem;
+}
+
+.form-imgs .pikachu {
+    width: 5rem;
+    height: 5rem;
+}
+
+.master {
+    left: 17.5rem;
+    top: 0.25rem;
+}
+
+.pkm {
+    right: 21rem;
+    top: 7rem;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inputs div {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputs input {
+    line-height: 2rem;
+    width: 20rem;
+    border: solid 1px black;
+    border-radius: 0.5rem;
+    padding: 0 0.25rem;
+    background: none;
+}
+.msg {
+    color:red;
+}
+
+button {
+    border: solid 1px black;
+    border-radius: 0.5rem;
+    line-height: 2rem;  
+    background-color: rgba(0, 0, 0, 0.4);
+    color: rgb(255, 255, 255);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    color: black;
+}
+
+.click-here {
+    font-size: 0.9rem;
+    font-weight: bolder;
+}
+
+.click-here a {
+    font-size: 0.90rem;
+    text-decoration: none;
+    text-shadow: 0.05rem 0.05rem 0.05rem rgb(255, 255, 255);
+}
+
+.click-here a:hover {
+    font-size: 1rem;
+    text-shadow: 0.05rem 0.05rem 0.075rem rgb(255, 255, 255);
 }

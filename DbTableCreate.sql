@@ -118,3 +118,29 @@ CREATE TABLE pokemons_species (
     modified datetime DEFAULT NULL,
     FOREIGN KEY (pokemon_id) REFERENCES pokemons (id)
 );
+
+CREATE TABLE user_access (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_access VARCHAR(40) NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL
+);
+
+CREATE TABLE users (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(40) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    access_id INT NOT NULL DEFAULT 3,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (access_id) REFERENCES user_access (id)
+);
+
+INSERT INTO `user_access` (`user_access`, `created`) VALUES
+('admin', NOW()),
+('master', NOW()),
+('player', NOW());
+
+INSERT INTO `users` (`username`, `email`, `password`, `access_id`, `created`) VALUES
+('admin', 'admin@mail.com', MD5('admin'), 1, NOW());

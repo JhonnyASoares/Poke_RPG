@@ -48,6 +48,8 @@ class StsRead extends StsConn
      * @param string $terms Recebe os links da QUERY, ex: sts_situation_id =:sts_situation_id
      * @param string $parseString Recebe o valores que devem ser subtituidos no link, ex: sts_situation_id=1
      * 
+     * @example exeRead("table", "WHERE id=:id LIMIT :limit", "id=1&limit=1");
+     * 
      * @return void
      */
     public function exeRead(string $table, string|null $terms = null, string|null $parseString = null)

@@ -23,6 +23,9 @@ class ConfigView extends Config
     {
         if (file_exists('app/' . $this->nameView . '.php')) {
             include 'app/Sts/Views/Include/Header.php';
+            if ($this->nameView != 'Sts/Views/Login') {
+                include 'app/Sts/Views/Include/Nav.php';
+            }
             include 'app/' . $this->nameView . '.php';
             include 'app/Sts/Views/Include/Footer.php';
         } else {
