@@ -108,12 +108,10 @@ CREATE TABLE pokemons_species (
     is_baby BOOLEAN NOT NULL,
     is_legendary BOOLEAN NOT NULL,
     is_mythical BOOLEAN NOT NULL,
-
     base_happiness INT NOT NULL,
     capture_rate INT NOT NULL,
-    gender_rate INT NOT NULL,   
+    gender_rate INT NOT NULL,
     hatch_counter INT NOT NULL,
-
     created datetime NOT NULL,
     modified datetime DEFAULT NULL,
     FOREIGN KEY (pokemon_id) REFERENCES pokemons (id)
@@ -137,10 +135,45 @@ CREATE TABLE users (
     FOREIGN KEY (access_id) REFERENCES user_access (id)
 );
 
-INSERT INTO `user_access` (`user_access`, `created`) VALUES
-('admin', NOW()),
-('master', NOW()),
-('player', NOW());
+INSERT INTO
+    `user_access` (`user_access`, `created`)
+VALUES
+    ('admin', NOW()),
+    ('master', NOW()),
+    ('player', NOW());
 
-INSERT INTO `users` (`username`, `email`, `password`, `access_id`, `created`) VALUES
-('admin', 'admin@mail.com', MD5('admin'), 1, NOW());
+INSERT INTO
+    `users` (
+        `username`,
+        `email`,
+        `password`,
+        `access_id`,
+        `created`
+    )
+VALUES
+    (
+        'admin',
+        'admin@mail.com',
+        MD5('admin'),
+        1,
+        NOW()
+    );
+
+CREATE TABLE pokemons_moves_link (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pokemon_id INT NOT NULL,
+    move_id INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (pokemon_id) REFERENCES pokemons (id),
+    FOREIGN KEY (move_id) REFERENCES moves (id)
+);
+CREATE TABLE evolution_chains (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pokemon_id INT NOT NULL,
+    evolves_to INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (pokemon_id) REFERENCES pokemons (id),
+    FOREIGN KEY (evolves_to) REFERENCES pokemons (id)
+)

@@ -249,6 +249,96 @@ class ApiToDb
             }
         }
     }
+
+    /**
+     * Função responsável por criar a ligação entre a tabela 'pokemons' e a tabela 'moves' via tabela 'pokemons_moves_link'
+     *
+     * @return void
+     */
+    public function savePkmMoveLink(): void
+    {
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1500');
+        $filterResults = $testarApi->result->results;
+        foreach ($filterResults as $values) {
+            $interPkm = new \Sts\Models\GetApi($values->url);
+            $iMResult = $interPkm->result;
+
+            //Buscando o id do pokemon no banco de dados
+            $getPkmId = new \Sts\Models\Helper\StsRead;
+            $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$iMResult->name}'");
+            $pkmId = $getPkmId->getResult();
+            //Atribuindo ao $this->data os dados que serão salvos do banco de dados
+            $this->data['pokemon_id'] = $pkmId[0]['id'];
+            //Buscando o id do move no banco de dados
+            foreach ($iMResult->moves as $objMove) {
+                //Buscando o id do move no banco de dados
+                $getMoveId = new \Sts\Models\Helper\StsRead;
+                $getMoveId->fullRead("SELECT id FROM moves WHERE name = '{$objMove->move->name}'");
+                $moveId = $getMoveId->getResult();
+                //Atribuindo ao $this->data os dados que serão salvos do banco de dados
+                $this->data['move_id'] = $moveId[0]['id'];
+                //Salvando os dados do banco de dados
+
+                $registerMoveLink = new \Sts\Models\Helper\StsCreate;
+                $registerMoveLink->exeCreate('pokemons_moves_link', $this->data);
+            }
+        }
+        echo "cabo";
+    }
+
+    /**
+     * Função responsável por criar a ligação evolutiva dos pokemons na tabela 'evolution_chains'
+     * 
+     * @return void
+     */
+    public function evolutionChain(): void
+    {
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/evolution-chain/?offset=0&limit=1000'); //46
+        $filterResults = $testarApi->result->results;
+        foreach ($filterResults as $values) {
+            $interPkm = new \Sts\Models\GetApi($values->url);
+            $iMResult = $interPkm->result;
+
+            //Utilizando função recursiva para criar a ligação evolutiva dos pokemons
+            $this->evolveRecursive($iMResult->chain);
+        }
+    }
+
+    /**
+     * Função recursiva responsável por criar a ligação evolutiva dos pokemons
+     * na tabela 'evolution_chains'
+     *
+     * @param object $chain objeto com a informação de evolução
+     *
+     * @return void
+     */
+    private function evolveRecursive($chain)
+    {
+        //Verificando se tem evolucao
+        if (!empty($chain->evolves_to)) {
+            //Pegando o ID do pokemon e atribuindo ao array $pkmsId
+            $getPkmId = new \Sts\Models\GetApi($chain->species->url);
+            $iMResultAlter = $getPkmId->result;
+            $pkmsId['pokemon_id'] = $iMResultAlter->id;
+
+            //Pegando o ID das evolucoes e atribuindo ao array $pkmsId
+            foreach ($chain->evolves_to as $objEvo) {
+
+                $getPkmId = new \Sts\Models\GetApi($chain->species->url);
+                $iMResultAlter = $getPkmId->result;
+                $pkmsId['evolves_to'] = $iMResultAlter->id;
+
+                //Salvando os dados do array $pkmsId na tabela 'evolution_chains'
+                $registerChain = new \Sts\Models\Helper\StsCreate;
+                $registerChain->exeCreate('evolution_chains', $pkmsId);
+
+                //Verificando se a evolucao tem evolucoes, se sim, chamando a funcao recursiva
+                if (!empty($objEvo->evolves_to)) {
+                    $this->evolveRecursive($objEvo);
+                }
+            }
+        }
+    }
     /**
      * Funcao responsavel por fazer a ligação entre as tables 'pokemons' e 'types'
      *
