@@ -26,6 +26,7 @@ class Api
         //$teste->savePokemonsSpeciesDb();
         //$teste->savePkmMoveLink();
         //$teste->evolutionChain();
+        $teste->savePokedexes();
 
 
         //$loadView = new \Core\ConfigView("sts/Views/Api", $this->data);

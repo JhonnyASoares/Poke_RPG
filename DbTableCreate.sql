@@ -177,3 +177,19 @@ CREATE TABLE evolution_chains (
     FOREIGN KEY (pokemon_id) REFERENCES pokemons (id),
     FOREIGN KEY (evolves_to) REFERENCES pokemons (id)
 )
+CREATE TABLE pokedexes (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(40) NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL
+)
+CREATE TABLE pokedexes_pokemons_link (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pokemon_id INT NOT NULL,
+    pokedex_id INT NOT NULL,
+    entry_number INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (pokemon_id) REFERENCES pokemons (id),
+    FOREIGN KEY (pokedex_id) REFERENCES pokedexes (id)
+)

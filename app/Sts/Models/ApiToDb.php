@@ -167,9 +167,13 @@ class ApiToDb
         foreach ($filterResults as $values) {
             $interPkm = new \Sts\Models\GetApi($values->url);
             $iMResult = $interPkm->result;
+
+            if (!$iMResult->is_default) {
+                break;
+            }
             //Atribuindo os dados que irão para tabela 'pokemons' no array $this->data
             $this->data['id'] = $iMResult->id;
-            $this->data['name'] = $iMResult->name;
+            $this->data['name'] = $iMResult->species->name;
             foreach ($iMResult->stats as $statData) {
                 $statName = $statData->stat->name;
                 if ($statName == 'hp') {
@@ -189,13 +193,10 @@ class ApiToDb
             $this->data['height'] = $iMResult->height;
             $this->data['weight'] = $iMResult->weight;
             //Salvando os dados do array '$this->data' na tabela 'pokemons' 
-            try {
-                $registerPokemon = new \Sts\Models\Helper\StsCreate;
-                $registerPokemon->exeCreate('pokemons', $this->data);
-            } catch (Exception $err) {
-                echo "ERRO AO REGISTRAR O POKEMON " .  $err;
-                die;
-            }
+
+            $registerPokemon = new \Sts\Models\Helper\StsCreate;
+            $registerPokemon->exeCreate('pokemons', $this->data);
+
             // Criando a ligação entre a table 'pokemons' e a table 'types'
             $this->pokemonTypeLink($iMResult);
             // Criando a ligação entre a table 'pokemons' e a table 'abilities'
@@ -224,11 +225,13 @@ class ApiToDb
             $iMResult = $interPkm->result;
 
             //Buscando o id do pokemon no banco de dados
-            $pkmName = $iMResult->varieties[0]->pokemon->name;
+            $pkmName = $iMResult->name;
             $getPkmData = new \Sts\Models\Helper\StsRead;
             $getPkmData->exeRead('pokemons', "WHERE `name`='$pkmName'");
             $pkmData = $getPkmData->getResult();
-
+            if (empty($pkmData)) {
+                break;
+            }
             //Atribuindo ao $this->data os dados que serão salvos do banco de dados
             $this->data['pokemon_id'] = $pkmData[0]['id'];
             $this->data['is_baby'] = (int) $iMResult->is_baby;
@@ -239,14 +242,9 @@ class ApiToDb
             $this->data['gender_rate'] = $iMResult->gender_rate;
             $this->data['hatch_counter'] = $iMResult->hatch_counter;
 
-            //Salvando os dados do banco de dados
-            try {
-                $registerPkmSpecies = new \Sts\Models\Helper\StsCreate;
-                $registerPkmSpecies->exeCreate('pokemons_species', $this->data);
-            } catch (Exception $err) {
-                echo "ERRO AO REGISTRAR O POKEMON " .  $err;
-                die;
-            }
+            //Salvando os dados na tabela 'pokemons_species'
+            $registerPkmSpecies = new \Sts\Models\Helper\StsCreate;
+            $registerPkmSpecies->exeCreate('pokemons_species', $this->data);
         }
     }
 
@@ -265,8 +263,12 @@ class ApiToDb
 
             //Buscando o id do pokemon no banco de dados
             $getPkmId = new \Sts\Models\Helper\StsRead;
-            $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$iMResult->name}'");
+            $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$iMResult->species->name}'");
             $pkmId = $getPkmId->getResult();
+            //Quebrando o codigo para parar o loop se nada for encontrado
+            if (empty($pkmId)) {
+                break;
+            }
             //Atribuindo ao $this->data os dados que serão salvos do banco de dados
             $this->data['pokemon_id'] = $pkmId[0]['id'];
             //Buscando o id do move no banco de dados
@@ -283,9 +285,48 @@ class ApiToDb
                 $registerMoveLink->exeCreate('pokemons_moves_link', $this->data);
             }
         }
-        echo "cabo";
     }
+    /**
+     * Função responsável por salvar as Pokedex no Bando de Dados
+     *
+     * @return void
+     */
+    public function savePokedexes(): void
+    {
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokedex/?offset=0&limit=50');
+        $filterResults = $testarApi->result->results;
+        foreach ($filterResults as $values) {
+            $interPkm = new \Sts\Models\GetApi($values->url);
+            $iMResult = $interPkm->result;
 
+            //Atribuindo os dados que irão para tabela 'pokedexes' no array $this->data
+            $this->data['id'] = $iMResult->id;
+            //Buscando o nome em inglês para salvar na tabela
+            foreach ($iMResult->names as $value) {
+                if ($value->language->name == 'en') {
+                    $this->data['name'] = $value->name;
+                }
+            }
+            //Caso não encontre o nome em inglês, buscando o nome em outro local
+            if (empty($iMResult->names)) {
+                $this->data['name'] = $iMResult->name;
+            }
+            //Salvando os dados na tabela 'pokedexes'
+            $registerPokedex = new \Sts\Models\Helper\StsCreate;
+            $registerPokedex->exeCreate('pokedexes', $this->data);
+
+            foreach ($iMResult->pokemon_entries as $pkm) {
+                //Buscando o id do pokemon no banco de dados
+                $getPkmId = new \Sts\Models\Helper\StsRead;
+                $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$pkm->pokemon_species->name}'");
+                $saveData['pokemon_id'] = $getPkmId->getResult()[0]['id'];
+                $saveData['pokedex_id'] = $this->data['id'];
+                $saveData['entry_number'] = $pkm->entry_number;
+                //Salvando os dados na tabela 'pokedexes_pokemons_link'
+                $registerPokedex->exeCreate('pokedexes_pokemons_link', $saveData);
+            }
+        }
+    }
     /**
      * Função responsável por criar a ligação evolutiva dos pokemons na tabela 'evolution_chains'
      * 
@@ -298,6 +339,7 @@ class ApiToDb
         foreach ($filterResults as $values) {
             $interPkm = new \Sts\Models\GetApi($values->url);
             $iMResult = $interPkm->result;
+            echo $iMResult->id . '<br>';
 
             //Utilizando função recursiva para criar a ligação evolutiva dos pokemons
             $this->evolveRecursive($iMResult->chain);
@@ -312,21 +354,30 @@ class ApiToDb
      *
      * @return void
      */
-    private function evolveRecursive($chain)
+    private function evolveRecursive($chain): void
     {
         //Verificando se tem evolucao
         if (!empty($chain->evolves_to)) {
             //Pegando o ID do pokemon e atribuindo ao array $pkmsId
-            $getPkmId = new \Sts\Models\GetApi($chain->species->url);
-            $iMResultAlter = $getPkmId->result;
-            $pkmsId['pokemon_id'] = $iMResultAlter->id;
+            //$getPkmId = new \Sts\Models\GetApi($chain->species->url);
+            //$iMResultAlter = $getPkmId->result;
+            $getPkmId = new \Sts\Models\Helper\StsRead();
+            $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$chain->species->name}'");
+            $iResult = $getPkmId->getResult();
+            //print_r($chain->species->name);
+            echo $chain->species->name . "<br>";
+            $pkmsId['pokemon_id'] = $iResult[0]['id'];
 
             //Pegando o ID das evolucoes e atribuindo ao array $pkmsId
             foreach ($chain->evolves_to as $objEvo) {
 
-                $getPkmId = new \Sts\Models\GetApi($chain->species->url);
-                $iMResultAlter = $getPkmId->result;
-                $pkmsId['evolves_to'] = $iMResultAlter->id;
+                //$getPkmId = new \Sts\Models\GetApi($chain->species->url);
+                //$iMResultAlter = $getPkmId->result;
+                $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$objEvo->species->name}'");
+                $iResult = $getPkmId->getResult();
+                echo $objEvo->species->name . "<br>";
+                //print_r($objEvo->species->name);
+                $pkmsId['evolves_to'] = $iResult[0]['id'];
 
                 //Salvando os dados do array $pkmsId na tabela 'evolution_chains'
                 $registerChain = new \Sts\Models\Helper\StsCreate;
