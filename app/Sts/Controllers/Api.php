@@ -23,10 +23,8 @@ class Api
         //$teste->saveNaturesDb();
         //$teste->saveAbilitysDb();
         //$teste->savePokemonsDb();
-        //$teste->savePokemonsSpeciesDb();
-        //$teste->savePkmMoveLink();
         //$teste->evolutionChain();
-        $teste->savePokedexes();
+        //$teste->savePokedexes();
 
 
         //$loadView = new \Core\ConfigView("sts/Views/Api", $this->data);

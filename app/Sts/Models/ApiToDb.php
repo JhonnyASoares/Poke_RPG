@@ -162,14 +162,15 @@ class ApiToDb
     public function savePokemonsDb(): void
     {
         //Classe \GetApi recebe o link da API, aplica o cURL e atribui os dados com json_decode aplicado ao objeto $this->result 
-        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1500');
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=2000');
         $filterResults = $testarApi->result->results;
         foreach ($filterResults as $values) {
             $interPkm = new \Sts\Models\GetApi($values->url);
             $iMResult = $interPkm->result;
+            echo $iMResult->id . '<br>';
 
             if (!$iMResult->is_default) {
-                break;
+                die;
             }
             //Atribuindo os dados que irão para tabela 'pokemons' no array $this->data
             $this->data['id'] = $iMResult->id;
@@ -192,15 +193,19 @@ class ApiToDb
             }
             $this->data['height'] = $iMResult->height;
             $this->data['weight'] = $iMResult->weight;
-            //Salvando os dados do array '$this->data' na tabela 'pokemons' 
 
+
+            //Salvando os dados do array '$this->data' na tabela 'pokemons' 
             $registerPokemon = new \Sts\Models\Helper\StsCreate;
             $registerPokemon->exeCreate('pokemons', $this->data);
-
+            // Salvando os dados da tabela 'pokemons' na tabela 'pokemons_species'
+            $this->savePokemonsSpeciesDb($iMResult->species->url, $iMResult->id);
             // Criando a ligação entre a table 'pokemons' e a table 'types'
             $this->pokemonTypeLink($iMResult);
             // Criando a ligação entre a table 'pokemons' e a table 'abilities'
             $this->pokemonAbilityLink($iMResult);
+            // Criando a ligação entre a table 'pokemons' e a table 'moves'
+            $this->savePkmMoveLink($iMResult->moves, $iMResult->id);
             // Salvando as imagens do pokemon em outra tabela 
             $this->pokemonImages($iMResult);
             // Verificando se os pokemons realmente tem gifs antes de tentar salvados
@@ -215,37 +220,23 @@ class ApiToDb
      *
      * @return void
      */
-    public function savePokemonsSpeciesDb(): void
+    private function savePokemonsSpeciesDb($speciesUrl, $pkmId): void
     {
-        //Classe \GetApi recebe o link da API, aplica o cURL e atribui os dados com json_decode aplicado ao objeto $this->result 
-        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon-species/?offset=0&limit=2000');
-        $filterResults = $testarApi->result->results;
-        foreach ($filterResults as $values) {
-            $interPkm = new \Sts\Models\GetApi($values->url);
-            $iMResult = $interPkm->result;
 
-            //Buscando o id do pokemon no banco de dados
-            $pkmName = $iMResult->name;
-            $getPkmData = new \Sts\Models\Helper\StsRead;
-            $getPkmData->exeRead('pokemons', "WHERE `name`='$pkmName'");
-            $pkmData = $getPkmData->getResult();
-            if (empty($pkmData)) {
-                break;
-            }
-            //Atribuindo ao $this->data os dados que serão salvos do banco de dados
-            $this->data['pokemon_id'] = $pkmData[0]['id'];
-            $this->data['is_baby'] = (int) $iMResult->is_baby;
-            $this->data['is_legendary'] = (int) $iMResult->is_legendary;
-            $this->data['is_mythical'] = (int) $iMResult->is_mythical;
-            $this->data['base_happiness'] = $iMResult->base_happiness;
-            $this->data['capture_rate'] = $iMResult->capture_rate;
-            $this->data['gender_rate'] = $iMResult->gender_rate;
-            $this->data['hatch_counter'] = $iMResult->hatch_counter;
-
-            //Salvando os dados na tabela 'pokemons_species'
-            $registerPkmSpecies = new \Sts\Models\Helper\StsCreate;
-            $registerPkmSpecies->exeCreate('pokemons_species', $this->data);
-        }
+        $interPkm = new \Sts\Models\GetApi($speciesUrl);
+        $iMResult = $interPkm->result;
+        //Atribuindo ao $saveData os dados que serão salvos do banco de dados
+        $saveData['pokemon_id'] = $pkmId;
+        $saveData['is_baby'] = (int) $iMResult->is_baby;
+        $saveData['is_legendary'] = (int) $iMResult->is_legendary;
+        $saveData['is_mythical'] = (int) $iMResult->is_mythical;
+        $saveData['base_happiness'] = $iMResult->base_happiness;
+        $saveData['capture_rate'] = $iMResult->capture_rate;
+        $saveData['gender_rate'] = $iMResult->gender_rate;
+        $saveData['hatch_counter'] = $iMResult->hatch_counter;
+        //Salvando os dados na tabela 'pokemons_species'
+        $registerPkmSpecies = new \Sts\Models\Helper\StsCreate;
+        $registerPkmSpecies->exeCreate('pokemons_species', $saveData);
     }
 
     /**
@@ -253,37 +244,22 @@ class ApiToDb
      *
      * @return void
      */
-    public function savePkmMoveLink(): void
+    private function savePkmMoveLink($movesArray, $pkmId): void
     {
-        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1500');
-        $filterResults = $testarApi->result->results;
-        foreach ($filterResults as $values) {
-            $interPkm = new \Sts\Models\GetApi($values->url);
-            $iMResult = $interPkm->result;
 
-            //Buscando o id do pokemon no banco de dados
-            $getPkmId = new \Sts\Models\Helper\StsRead;
-            $getPkmId->fullRead("SELECT id FROM pokemons WHERE name = '{$iMResult->species->name}'");
-            $pkmId = $getPkmId->getResult();
-            //Quebrando o codigo para parar o loop se nada for encontrado
-            if (empty($pkmId)) {
-                break;
-            }
-            //Atribuindo ao $this->data os dados que serão salvos do banco de dados
-            $this->data['pokemon_id'] = $pkmId[0]['id'];
+        //Atribuindo ao $saveData os dados que serão salvos do banco de dados
+        $saveData['pokemon_id'] = $pkmId;
+        //Buscando o id do move no banco de dados
+        foreach ($movesArray as $objMove) {
             //Buscando o id do move no banco de dados
-            foreach ($iMResult->moves as $objMove) {
-                //Buscando o id do move no banco de dados
-                $getMoveId = new \Sts\Models\Helper\StsRead;
-                $getMoveId->fullRead("SELECT id FROM moves WHERE name = '{$objMove->move->name}'");
-                $moveId = $getMoveId->getResult();
-                //Atribuindo ao $this->data os dados que serão salvos do banco de dados
-                $this->data['move_id'] = $moveId[0]['id'];
-                //Salvando os dados do banco de dados
-
-                $registerMoveLink = new \Sts\Models\Helper\StsCreate;
-                $registerMoveLink->exeCreate('pokemons_moves_link', $this->data);
-            }
+            $getMoveId = new \Sts\Models\Helper\StsRead();
+            $getMoveId->fullRead("SELECT id FROM moves WHERE name = '{$objMove->move->name}'");
+            $moveId = $getMoveId->getResult();
+            //Atribuindo ao $saveData os dados que serão salvos do banco de dados
+            $saveData['move_id'] = $getMoveId->getResult()[0]['id'];
+            //Salvando os dados do banco de dados
+            $registerMoveLink = new \Sts\Models\Helper\StsCreate();
+            $registerMoveLink->exeCreate('pokemons_moves_link', $saveData);
         }
     }
     /**
@@ -408,13 +384,9 @@ class ApiToDb
             foreach ($typeDbData as $v) {
                 $typesArray['type_id'] = $v['id'];
                 //Salvando os dados do array '$typesArray' na tabela 'pokemons_types_link' 
-                try {
-                    $registerTypesPLink = new \Sts\Models\Helper\StsCreate;
-                    $registerTypesPLink->exeCreate('pokemons_types_link', $typesArray);
-                } catch (Exception $err) {
-                    echo "ERRO AO FAZER LINK COM OS TYPES " . $err;
-                    die;
-                }
+
+                $registerTypesPLink = new \Sts\Models\Helper\StsCreate;
+                $registerTypesPLink->exeCreate('pokemons_types_link', $typesArray);
             }
         }
     }
@@ -438,13 +410,8 @@ class ApiToDb
                 //Forcando boolean virar int pois estava dando erro
                 $abilityArray['is_hidden'] = (int) $objAbility->is_hidden;
                 //Salvando os dados do array '$abilityArray' na tabela 'pokemons_abilities_link' 
-                try {
-                    $registerAblyLink = new \Sts\Models\Helper\StsCreate;
-                    $registerAblyLink->exeCreate('pokemons_abilities_link', $abilityArray);
-                } catch (Exception $err) {
-                    echo "ERRO AO FAZER LINK DO COM AS HABILIDADES " . $err;
-                    die;
-                }
+                $registerAblyLink = new \Sts\Models\Helper\StsCreate;
+                $registerAblyLink->exeCreate('pokemons_abilities_link', $abilityArray);
             }
         }
     }
@@ -463,13 +430,8 @@ class ApiToDb
             'front_shiny' => $imagens->front_shiny
         ];
         //Salvando os dados do array '$imagensArray' na tabela 'pokemons_imgs' 
-        try {
-            $registerPkmImgs = new \Sts\Models\Helper\StsCreate;
-            $registerPkmImgs->exeCreate('pokemons_imgs', $imagensArray);
-        } catch (Exception $err) {
-            echo "ERRO AO REGISTRAR AS IMAGENS PNG " . $err;
-            die;
-        }
+        $registerPkmImgs = new \Sts\Models\Helper\StsCreate;
+        $registerPkmImgs->exeCreate('pokemons_imgs', $imagensArray);
     }
     /**
      * Funcao responsavel por salvar os gifs dos pokemons na tabela 'pokemons_gifs'
@@ -488,12 +450,8 @@ class ApiToDb
             'back_shiny' => $gifs->back_shiny
         ];
         //Salvando os dados do array '$gifsArray' na tabela 'pokemons_gifs' 
-        try {
-            $registerPkmGifs = new \Sts\Models\Helper\StsCreate;
-            $registerPkmGifs->exeCreate('pokemons_gifs', $gifsArray);
-        } catch (Exception $err) {
-            echo "ERRO AO REGISTRAR OD GIFS" . $err;
-            die;
-        }
+
+        $registerPkmGifs = new \Sts\Models\Helper\StsCreate;
+        $registerPkmGifs->exeCreate('pokemons_gifs', $gifsArray);
     }
 }
