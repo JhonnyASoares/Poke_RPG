@@ -17,12 +17,16 @@
         if ($position !== false) {
             $var = substr($var, 0, $position); // Pegar tudo até a "/"
         }
+        if ($var != 'login') {
+            echo '<link rel="stylesheet" type="text/css" href="' . URLCSS . 'nav.css">';
+        }
         // Se o arquivo.css existir coloca o link dele
         if (file_exists("app/Sts/Assets/Css/$var.css")) {
             echo '<link rel="stylesheet" type="text/css" href="' . URLCSS . $var . '.css">';
         }
     } else {
-        echo '<link rel="stylesheet" type="text/css" href="' . URLCSS . 'home.css">';
+        echo '<link rel="stylesheet" type="text/css" href="' . URLCSS . 'nav.css">
+    <link rel="stylesheet" type="text/css" href="' . URLCSS . 'home.css">';
     }
     ?>
 </head>
