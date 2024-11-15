@@ -15,9 +15,10 @@ abstract class Config
      */
     protected function config(): void
     {
-        define('URL', 'http://pokemon.test/');
-        define('URLCSS', 'http://pokemon.test/app/Sts/Assets/Css/');
-        define('URLJS', 'http://pokemon.test/app/Sts/Assets/Js/');
+        define('URL', 'http://pokerpg.shop//');
+        // 
+        define('URLCSS', '/app/Sts/Assets/Css/');
+        define('URLJS', '/app/Sts/Assets/Js/');
 
         define('CONTROLLER', 'Home');
 
