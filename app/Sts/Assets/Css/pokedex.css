@@ -1,0 +1,98 @@
+section {
+    background-color: var(--bg-color);
+    border-radius: 0.5rem;
+    max-width: 71rem;
+    margin: 0 auto 2rem;
+    padding: 1.5rem 0.5rem;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+
+}
+
+.title {
+    font-size: 3rem;
+    margin: 1rem 6rem 0;
+    text-transform: capitalize;
+    font-family: cursive;
+    text-shadow: 0.05rem 0.05rem 0.075rem rgba(255, 255, 255, 0.6);
+}
+
+.card {
+    background-color: var(--black-25);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.card:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0.5rem black;
+}
+
+section a {
+    text-decoration: none;
+    color: black;
+}
+
+.card h2 {
+    color: rgb(0, 0, 0, 0.7);
+}
+
+.card h3 {
+    text-transform: capitalize;
+    margin-bottom: 0.5rem;
+    color: rgb(0, 0, 0, 0.9);
+}
+
+
+.types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+    justify-items: center;
+    gap: 0.5rem;
+}
+
+.types span {
+    padding: 0.25rem 0;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    border-radius: 0.5rem;
+    border: solid 1px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+.pages-selector {
+    position: fixed;
+    bottom: 1%;
+}
+.pages-selector ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.pages-selector ul li {
+    border: solid 1px black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.pages-selector ul li a, .pg-active{
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: 0.5rem;
+}
+.pages-selector ul li a:hover{
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+.pages-selector ul i {
+    font-size: 1.1rem;
+}
+
+.pg-active {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
