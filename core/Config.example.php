@@ -15,7 +15,7 @@ abstract class Config
      */
     protected function config(): void
     {
-        define('URL', 'http://pokerpg.shop//');
+        define('URL', 'https://pokerpg.shop/'); // adicionar URL do site
         // 
         define('URLCSS', '/app/Sts/Assets/Css/');
         define('URLJS', '/app/Sts/Assets/Js/');
@@ -25,11 +25,11 @@ abstract class Config
 
         //Constantes do banco de dados 
 
-        define('HOST', 'localhost');
-        define('USER', 'root');
-        define('PASS', '');
-        define('DBNAME', 'pokemon_rpg');
-        define('PORT', 3306);
+        define('HOST', 'localhost'); // adicionar host do banco de dados
+        define('USER', 'root'); // adicionar usuário do banco de dados
+        define('PASS', ''); // adicionar senha do banco de dados
+        define('DBNAME', 'teste'); // adicionar nome do banco de dados
+        define('PORT', 3306); // adicionar porta do banco de dados
 
         define('EMAILADM', 'jhonny.mg35@gmail.com');
     }
