@@ -322,6 +322,15 @@ class ApiToDb
         }
     }
 
+    public function itens(): void
+    {
+        $testarApi = new \Sts\Models\GetApi('https://pokeapi.co/api/v2/item/?offset=00&limit=3000');
+        $filterResults = $testarApi->result->results;
+        foreach ($filterResults as $values) {
+            $interPkm = new \Sts\Models\GetApi($values->url);
+            $iMResult = $interPkm->result;
+        }
+    }
     /**
      * Função recursiva responsável por criar a ligação evolutiva dos pokemons
      * na tabela 'evolution_chains'

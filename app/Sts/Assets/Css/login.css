@@ -24,13 +24,11 @@ nav {
 }
 
 .container {
-
     min-height: 12.875rem;
     min-width: 35.5rem;
     padding-block: 8rem 3.75rem;
     display: flex;
     justify-content: center;
-
 }
 
 .main {

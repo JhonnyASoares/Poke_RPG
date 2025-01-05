@@ -15,7 +15,9 @@ class Api
      */
     public function index(): void
     {
-        print_r('<pre>');
+
+
+
         $teste = new \Sts\Models\ApiToDb();
         //$teste->saveTypeInDb();
         //$teste->saveDamageClassDb();

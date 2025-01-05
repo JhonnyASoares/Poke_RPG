@@ -16,6 +16,9 @@ class Login
      */
     public function index(): void
     {
+        if (isset($_SESSION['user_id'])) {
+            header("Location: " . URL . "home");
+        }
         //Pega os dados do POST em forma de array
         $this->dataForm = filter_input_array(INPUT_POST, FILTER_DEFAULT);
 

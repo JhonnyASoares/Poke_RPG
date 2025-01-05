@@ -1,0 +1,29 @@
+.container {
+    padding-top: 2rem;
+}
+
+section {
+    background-color: var(--bg-color);
+    border-radius: 0.5rem;
+    max-width: 71rem;
+    margin: 0 auto 2rem;
+    padding: 1.5rem 1rem;
+}
+
+.ficha-char {
+    width: 30rem;
+    background-color: rgb(153, 153, 153);
+}
+
+.ficha-img {
+    width: 14rem;
+    height: 16rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.ficha-img img {
+    height: 100%;
+}

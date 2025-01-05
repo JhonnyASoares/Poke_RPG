@@ -193,3 +193,95 @@ CREATE TABLE pokedexes_pokemons_link (
     FOREIGN KEY (pokemon_id) REFERENCES pokemons (id),
     FOREIGN KEY (pokedex_id) REFERENCES pokedexes (id)
 )
+CREATE TABLE fichas (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    class VARCHAR(100),
+    money INT,
+    BP INT,
+    user_id INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE TABLE insignias (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    image VARCHAR(255),
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL
+);
+CREATE TABLE itens (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL
+);
+CREATE TABLE fichas_insignias (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ficha_id INT NOT NULL,
+    insignia_id INT NOT NULL,
+    FOREIGN KEY (ficha_id) REFERENCES fichas(id),
+    FOREIGN KEY (insignia_id) REFERENCES insignias(id)
+);
+CREATE TABLE fichas_inventories (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    qtd INT,
+    ficha_id INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (ficha_id) REFERENCES fichas(id)
+);
+CREATE TABLE fichas_types (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ficha_id INT NOT NULL,
+    type_id INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (ficha_id) REFERENCES fichas(id),
+    FOREIGN KEY (type_id) REFERENCES types(id)
+);
+CREATE TABLE fichas_pokemons (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    EXP INT,
+    current_HP INT,
+    friendship INT,
+    gender BOOLEAN,
+    active BOOLEAN DEFAULT 0,
+    
+    iv_HP INT DEFAULT 0,
+    iv_ATK INT DEFAULT 0,
+    iv_DEF INT DEFAULT 0,
+    iv_SA INT DEFAULT 0,
+    iv_SD INT DEFAULT 0,
+    iv_SPD INT DEFAULT 0,
+    ev_HP INT DEFAULT 0,
+    ev_ATK INT DEFAULT 0,
+    ev_DEF INT DEFAULT 0,
+    ev_SA INT DEFAULT 0,
+    ev_SD INT DEFAULT 0,
+    ev_SPD INT DEFAULT 0,
+
+    move_1 INT,
+    move_2 INT,
+    move_3 INT,
+    move_4 INT,
+    abilitie_id INT,
+    item_id INT,
+    nature_id INT,
+    ficha_id INT NOT NULL,
+    pokemon_id INT NOT NULL,
+    created datetime NOT NULL,
+    modified datetime DEFAULT NULL,
+    FOREIGN KEY (move_1) REFERENCES moves(id),
+    FOREIGN KEY (move_2) REFERENCES moves(id),
+    FOREIGN KEY (move_3) REFERENCES moves(id),
+    FOREIGN KEY (move_4) REFERENCES moves(id),
+    FOREIGN KEY (abilitie_id) REFERENCES abilities(id),
+    FOREIGN KEY (item_id) REFERENCES itens(id),
+    FOREIGN KEY (nature_id) REFERENCES natures(id),
+    FOREIGN KEY (ficha_id) REFERENCES fichas(id),
+    FOREIGN KEY (pokemon_id) REFERENCES pokemons(id)
+)

@@ -16,8 +16,7 @@ class ConfigController extends Config
     private array $urlArray;
     /** @var string $urlController Recebe da URL o nome da controller */
     private string $urlController;
-    /** @var string $urlParamentro Recebe da URL o parâmetro */
-    /*private string $urlParameter;*/
+    /** @var string $urlSlugController Recebe da URL o nome da controller convertido para o nome da classe */
     private string $urlSlugController;
     /** @var array $format Recebe o array de caracteres especiais que devem ser substituido */
     private array $format;
@@ -38,6 +37,13 @@ class ConfigController extends Config
             $this->clearURL();
 
             $this->urlArray = explode("/", $this->url); //separa o conteudo da URL pelas barras
+            if ((isset($this->urlArray[0]) && $this->urlArray[0] == "api") && (isset($this->urlArray[1]))) {
+                $apiControl = $this->urlArray[1];
+                if ($apiControl == "search") {
+                    $api = new \Sts\Controllers\Search();
+                    return $api->search($this->urlArray[2]);
+                }
+            }
 
             if (isset($this->urlArray[0])) {
                 $this->urlController = $this->slugController($this->urlArray[0]);

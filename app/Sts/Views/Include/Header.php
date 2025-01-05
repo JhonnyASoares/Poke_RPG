@@ -8,6 +8,7 @@
     <!-- identificar o tamanho da tela do dispositivo do usuario -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/app/Sts/Assets/Images/master-ball.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="<?= URLCSS; ?>main.css">
     <?php
     // Se existir $_GET['url'] ele pega o dado da url até a "/" e adiciona o css com daquela pagina

@@ -1,0 +1,17 @@
+.container{
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 3rem;
+}
+section {
+    background-color: rgb(194, 58, 58);
+    width: 50rem;
+    height: 50rem;
+
+}
+
+aside {
+    background-color: bisque;
+    width: 25rem;
+    height: 50rem;
+}

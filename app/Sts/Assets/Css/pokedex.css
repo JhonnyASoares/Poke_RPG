@@ -84,7 +84,7 @@ section a {
     display: block;
     padding: 0.5rem;
 }
-.pages-selector ul li a:hover{
+.pages-selector .active a:hover{
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
 }
@@ -95,4 +95,7 @@ section a {
 .pg-active {
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
+}
+.disabled {
+    opacity: 50%;
 }
