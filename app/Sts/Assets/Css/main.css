@@ -23,3 +23,11 @@ body {
     --white-75: rgba(255, 255, 255, 0.75);
     
 }
+.flex-collumn {
+    display: flex;
+    flex-direction: column;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
